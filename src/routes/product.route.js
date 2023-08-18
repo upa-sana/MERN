@@ -12,3 +12,4 @@ router
   .get(controller.getProductbyId)
   .put(checkBodyRequest, controller.updateProduct)
   .delete(controller.deleteProduct);
+router.route("/:productId/add-category").put(controller.addProductCategory);

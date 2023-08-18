@@ -1,6 +1,7 @@
 import * as data from "../model/data.js";
 
 const productList = JSON.parse(JSON.stringify(data.products));
+const categoryList = JSON.parse(JSON.stringify(data.category));
 
 // get all product
 export const getProduct = (req, res) => {
@@ -75,4 +76,25 @@ export const deleteProduct = (req, res) => {
     .json({ message: "Product deleted successfully", data: productList });
 };
 
-export const addProductCategory = (req, res) => {};
+export const addProductCategory = (req, res) => {
+  const productId = req.params.productId;
+  const categoryName = req.body.categoryName;
+  const productIndex = productList.findIndex((item) => item.id === productId);
+  if (productIndex === -1) {
+    return res.status(404).json({ message: `Product don't exist.` });
+  }
+
+  const categoryIndex = categoryList.findIndex(
+    (item) => item.categoryName === categoryName
+  );
+
+  if (categoryIndex === -1) {
+    return res.status(400).json({ errorMessage: "Category name don't exist" });
+  }
+
+  productList[productIndex] = {
+    ...productList[productIndex],
+    categoryName,
+  };
+  res.status(200).json({ message: "Category name is added to the product" });
+};
