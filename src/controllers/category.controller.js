@@ -1,61 +1,70 @@
-import * as data from "../model/data.js";
+import * as services from "../services/category.service.js";
 
-const categoryList = JSON.parse(JSON.stringify(data.category));
+// const categoryList = JSON.parse(JSON.stringify(data.category));
 
-export const getCategory = (req, res) => {
-  res.status(200).json({ message: "Category List", data: categoryList });
+export const getCategory = async (req, res) => {
+  const category = await services.findCategory();
+  res.status(200).json({ category: "Category List", data: category });
 };
 
 //get category by id
-export const getCategoryById = (req, res) => {
+export const getCategoryById = async (req, res) => {
   const categoryId = req.params.categoryId;
-  const category = categoryList.find((item) => item.id === categoryId);
-  if (!category) {
-    return res
-      .status(400)
-      .json({ errorMessage: "Bad Request! please provide valid category id" });
-  }
-  res.status(200).json(category);
+  // const category = categoryList.find((item) => item.id === categoryId);
+  const category = await services.findCategoryById(categoryId);
+  res
+    .status(200)
+    .json({ message: `category with ${categoryId}`, data: category });
 };
 
 // post category
-export const addCategory = (req, res) => {
-  const { categoryName, displayName } = req.body;
-  if (!categoryName || !displayName) {
-    return res
-      .status(400)
-      .json({ errorMessage: "Bad Request! please provide category detail" });
-  }
+export const addCategory = async (req, res) => {
+  // const { categoryName, displayName } = req.body;
+  // if (!categoryName || !displayName) {
+  //   return res
+  //     .status(400)
+  //     .json({ errorMessage: "Bad Request! please provide category detail" });
+  // }
   const newCategory = req.body;
-  newCategory.id = categoryList.length++;
-  categoryList.push(newCategory);
-  res.status(200).json({ message: "Category Added!", data: categoryList });
+  const category = await services.createCategory(newCategory);
+
+  res
+    .status(201)
+    .json({ message: "category created successfully!", data: category });
+
+  // newCategory.id = categoryList.length++;
+  // categoryList.push(newCategory);
+  // res.status(200).json({ message: "Category Added!", data: categoryList });
 };
 
 // update category
-export const updateCategory = (req, res) => {
+export const updateCategory = async (req, res) => {
   const categoryId = req.params.categoryId;
-  const { categoryName, displayName } = req.body;
-  const category = categoryList.find((item) => item.id === categoryId);
+  // const { categoryName, displayName } = req.body;
+  // if (!categoryName && !displayName) {
+  //   return res
+  //     .status(400)
+  //     .json({ errorMessage: "Bad Request! please provide category detail" });
+  // }
 
-  if (!category) {
-    return res
-      .status(400)
-      .json({ errorMessage: "Bad Request! please provide valid category id" });
-  }
+  // const category = categoryList.find((item) => item.id === categoryId);
 
-  if (!categoryName && !displayName) {
-    return res
-      .status(400)
-      .json({ errorMessage: "Bad Request! please provide category detail" });
-  }
+  const category = await services.putCategory(categoryId, req.body);
 
-  category.categoryName = categoryName ? categoryName : category.categoryName;
-  category.displayName = displayName ? displayName : category.displayName;
-  res.status(200).json({ message: "Data updated successfully!", categoryList });
+  // category.categoryName = categoryName ? categoryName : category.categoryName;
+  // category.displayName = displayName ? displayName : category.displayName;
+
+  res.status(200).json({ message: "Data updated successfully!", category });
 };
 
 // delete category
+export const removeCategory = async (req, res) => {
+  const categoryId = req.params.categoryId;
+  const category = await services.deleteCategory(categoryId);
+  res.status(200).json({ message: "Data deleted successfully!", category });
+};
+
+/*
 export const deleteCategory = (req, res) => {
   const categoryId = req.params.categoryId;
   const categoryIndex = categoryList.findIndex(
@@ -73,3 +82,4 @@ export const deleteCategory = (req, res) => {
     data: categoryList,
   });
 };
+*/
