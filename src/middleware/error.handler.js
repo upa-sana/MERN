@@ -1,14 +1,6 @@
 export const errorHandler = (error, req, res, next) => {
   let errorMessage = error.message;
   const errorType = error.name;
-  console.log(
-    "error type",
-    errorType,
-    "code:",
-    error.code,
-    "message",
-    errorMessage
-  );
   let statusCode = 500;
 
   switch (errorType) {
@@ -24,6 +16,7 @@ export const errorHandler = (error, req, res, next) => {
   }
   //`${error.stack}`
   // const testMessage = new ErrorResponse("test error message", 415);
+  console.log(`Error from middleware: ${error.stack}`);
 
-  return res.status(statusCode).json({ error: `${error.stack}` });
+  return res.status(statusCode).json({ error: `${error.message}` });
 };
