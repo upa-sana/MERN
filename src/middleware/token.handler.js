@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { User } from "../model/user.schema.js";
+import { ErrorResponse } from "../utils/error.response.js";
 export const protactedRoute = async (req, res, next) => {
   let token;
   const headers = req.headers.authorization || req.headers.authorizations;
@@ -9,7 +10,7 @@ export const protactedRoute = async (req, res, next) => {
   }
 
   if (!token) {
-    res.status(400).json({ message: "Token is miissing!" });
+    return next(new ErrorResponse(`Token is miissing!`, 400));
   }
 
   // jwt.verify(token, process.env.SECRET_KEY, (error, decoded) => {
@@ -22,13 +23,16 @@ export const protactedRoute = async (req, res, next) => {
   // });
 
   try {
-    const decoded = jwt.verify("token", token);
-    console.log("decoded", decoded);
-    req.user = await User.findById(decoded.id);
+    const payload = jwt.verify(token, process.env.SECRET_KEY); // return the payload seted on the jwt payload section while jwt signing.
+    req.user = await User.findById(payload.id); // it is returning null here: concern it please
     next();
   } catch (error) {
-    res
-      .status(401)
-      .json({ errorMessage: `You're not authorized to access this route` });
+    // res
+    //   .status(401)
+    //   .json({ errorMessage: `You're not authorized to access this route` });
+
+    return next(
+      new ErrorResponse(`You're not authorized to access this route`, 401)
+    );
   }
 };

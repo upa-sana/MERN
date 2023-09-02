@@ -1,11 +1,11 @@
 import asyncHandler from "express-async-handler";
 import { User } from "../model/user.schema.js";
+import { ErrorResponse } from "../utils/error.response.js";
 
 /**
  * @route  POST api/auth/register
  * @access public
  */
-
 export const singup = asyncHandler(async (req, res) => {
   // const user = await services.signupUser(req, res);
   const { name, email, password, role } = req.body;
@@ -18,18 +18,19 @@ export const singup = asyncHandler(async (req, res) => {
  * @route  POST api/auth/login
  * @access private
  */
-export const login = asyncHandler(async (req, res) => {
+export const login = asyncHandler(async (req, res, next) => {
   // const token = await services.authenticateUser(req, res);
   const { email, password } = req.body;
   const user = await User.findOne({ email }).select("+password");
   if (!user) {
-    return res.status(401).json({ errorMessage: "Invalid Credentials" });
-    // return new ErrorResponse("invalid credential", 401); //
+    // return res.status(401).json({ errorMessage: "Invalid Credentials" });
+    return next(new ErrorResponse("Invalid Credentials", 401));
   }
   // check if the entered password get matched
-  const isMatched = user.matchPassword(password);
+  const isMatched = await user.matchPassword(password);
   if (!isMatched) {
-    return res.status(401).json({ errorMessage: "Invalid Credentials" });
+    // return res.status(401).json({ errorMessage: "Invalid Credentials" });
+    return next(new ErrorResponse("Invalid Credentials", 401));
   }
 
   // const token = user.getSignedJwtToken();

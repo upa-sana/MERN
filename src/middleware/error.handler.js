@@ -1,7 +1,11 @@
+/**
+ * Global Error Handling Middleware
+ * 1. this middleare will called if the next(error) is passed
+ * 2. this middleware will called if any mongoose validation error occure since express asyn error hadler is used
+ * */
 export const errorHandler = (error, req, res, next) => {
-  let errorMessage = error.message;
   const errorType = error.name;
-  let statusCode = 500;
+  let statusCode = error.statusCode ? error.statusCode : 500;
 
   switch (errorType) {
     case "CastError":
@@ -12,7 +16,7 @@ export const errorHandler = (error, req, res, next) => {
       statusCode = 422;
       break;
     default:
-      statusCode = 500;
+      statusCode = statusCode;
   }
   //`${error.stack}`
   // const testMessage = new ErrorResponse("test error message", 415);

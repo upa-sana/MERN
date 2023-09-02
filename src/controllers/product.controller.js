@@ -1,13 +1,13 @@
 import asyncHandler from "express-async-handler";
 import * as data from "../model/data.js";
+import { Product } from "../model/product.schema.js";
 import * as services from "../services/product.service.js";
 
 const productList = JSON.parse(JSON.stringify(data.products));
 const categoryList = JSON.parse(JSON.stringify(data.category));
 
 /**
- * @route  api/products
- * @method  GET
+ * @route   GET api/products *
  * @access  public
  */
 export const getProduct = asyncHandler(async (req, res) => {
@@ -24,13 +24,12 @@ export const getProduct = asyncHandler(async (req, res) => {
 });
 
 /**
- * @route api/products/:productId
- * @method  GET
- * @access public
+ * @route   GET api/products/:productId *
+ * @access  public
  */
-export const getProductbyId = asyncHandler(async (req, res, next) => {
+export const getProductbyId = asyncHandler(async (req, res) => {
   const productId = req.params.productId;
-  const product = await services.findProductById();
+  const product = await services.findProductById(productId);
   // if (!product) {
   // return res
   //   .status(404)
@@ -41,11 +40,10 @@ export const getProductbyId = asyncHandler(async (req, res, next) => {
 });
 
 /**
- * @route api/products
- * @method: POST
- * @access: public
+ * @route   POST api/products
+ * @access  private
  */
-export const addProduct = asyncHandler(async (req, res, next) => {
+export const addProduct = asyncHandler(async (req, res) => {
   /**
    * error handling :
    * if the function us synchronous then using the throw new Error(message) will theow the error in the api calling interface eg. browser or postman.
@@ -65,33 +63,30 @@ export const addProduct = asyncHandler(async (req, res, next) => {
 });
 
 /**
- * @route api/products/:productId
- * @method: PUT
- * @access: public
+ * @route   PUT api/products/:productId
+ * @access  private
  */
 export const updateProduct = asyncHandler(async (req, res) => {
-  const productId = req.params.productId;
-
   // const product = await Product.findByIdAndUpdate(productId, req.body, {
   //   new: true,
   //   runValidators: true,
   // }); // it don't do the full-fleged validation
 
-  const product = await services.putProduct(productId, req.body);
+  const product = await services.putProduct(req, res);
   res
     .status(200)
     .json({ message: "Product updated successfully", data: product });
 });
 
 /**
- * @route api/products/:productId
- * @method: DELETE
- * @access: public
+ * @route    DELETE api/products/:productId
+ * @access   private
  */
 export const removeProduct = asyncHandler(async (req, res) => {
-  const productId = req.params.productId;
   // const product = await Product.findByIdAndRemove(productId); or,
-  const product = await services.deleteProduct(productId);
+
+  // const product = await services.deleteProduct(req, res);
+  const product = await Product.deleteOne({ _id: req.params.productId });
   res
     .status(200)
     .json({ message: "Product deleted successfully", data: product });

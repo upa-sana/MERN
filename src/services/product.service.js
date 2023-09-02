@@ -6,7 +6,7 @@ export const findProducts = async (product) => {
       path: "category",
       select: "displayName",
     })
-    .where("category")
+    .where("price")
     .gte(50000)
     .lte(60000);
 };
@@ -21,15 +21,28 @@ export const createProduct = async (requestBody) => {
   return product;
 };
 
-export const putProduct = async (productId, requestBody) => {
+export const putProduct = async (req, res) => {
+  const productId = req.params.productId;
+  const requestBody = req.body;
+  // console.log(requestBody);
   const product = await Product.findById(productId);
+  if (!product) {
+    return res.status(404).json({ message: `product doesn't exist!` });
+  }
+
   product.name = requestBody.name ? requestBody.name : product.name;
   product.price = requestBody.price ? requestBody.price : product.price;
-  product.desc = requestBody.desc ? requestBody.desc : product.desc;
   product.save();
   return product;
 };
 
-export const deleteProduct = async (productId) => {
-  return await Product.deleteOne({ _id: productId });
+export const deleteProduct = async (req, res) => {
+  const productId = req.params.productId;
+  const product = await Product.deleteOne({ _id: productId });
+  console.log(product, "service");
+  if (product.deletedCount === 1) {
+    return product;
+  } else {
+    res.status(400).json({ message: `bad request` });
+  }
 };
