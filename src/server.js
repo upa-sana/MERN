@@ -1,14 +1,10 @@
-import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
 import { app as mainApp } from "./app.js";
 import { errorHandler } from "./middleware/error.handler.js";
+import { MONGO_DB_CONNECTION_URL, PORT } from "./utils/env.parser.js";
 
-dotenv.config();
-//mongoose.connect('mongodb://127.0.0.1:27017/myapp');
-// const MONGO_URL = "mongodb://127.0.0.1:27017/ecommerce";
-
-mongoose.connect(process.env.MONGO_DB_CONNECTION_URL).then(
+mongoose.connect(MONGO_DB_CONNECTION_URL).then(
   () => {
     console.log("Server connection established!");
   },
@@ -17,7 +13,7 @@ mongoose.connect(process.env.MONGO_DB_CONNECTION_URL).then(
   }
 );
 const app = express();
-const PORT = process.env.PORT;
+const PORT = PORT;
 
 // request body parser middlerware
 app.use(express.json());

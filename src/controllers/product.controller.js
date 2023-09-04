@@ -1,6 +1,5 @@
 import asyncHandler from "express-async-handler";
 import * as data from "../model/data.js";
-import { Product } from "../model/product.schema.js";
 import * as services from "../services/product.service.js";
 
 const productList = JSON.parse(JSON.stringify(data.products));
@@ -67,12 +66,14 @@ export const addProduct = asyncHandler(async (req, res) => {
  * @access  private
  */
 export const updateProduct = asyncHandler(async (req, res) => {
+  const productId = req.params.productId;
+  const requestBody = req.body;
   // const product = await Product.findByIdAndUpdate(productId, req.body, {
   //   new: true,
   //   runValidators: true,
   // }); // it don't do the full-fleged validation
 
-  const product = await services.putProduct(req, res);
+  const product = await services.putProduct(productId, requestBody);
   res
     .status(200)
     .json({ message: "Product updated successfully", data: product });
@@ -84,15 +85,15 @@ export const updateProduct = asyncHandler(async (req, res) => {
  */
 export const removeProduct = asyncHandler(async (req, res) => {
   // const product = await Product.findByIdAndRemove(productId); or,
-
-  // const product = await services.deleteProduct(req, res);
-  const product = await Product.deleteOne({ _id: req.params.productId });
+  const productId = req.params.productId;
+  const product = await services.deleteProduct(productId);
+  // const product = await Product.deleteOne({ _id: req.params.productId });
   res
     .status(200)
     .json({ message: "Product deleted successfully", data: product });
 });
 
-// aggreation
+// QN -this part is remaing to implement with mongoose db
 export const addProductCategory = (req, res) => {
   const productId = req.params.productId;
   const categoryName = req.body.categoryName;

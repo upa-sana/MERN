@@ -9,4 +9,3 @@ app.use("/products", productRouter);
 app.use("/category", categoryRouter);
 app.use("/users", userRouter);
 app.use("/auth", authRouter);
-// mainRoute.use("/user");

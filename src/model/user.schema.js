@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
+import { JWT_SECRET_KEY, JWT_TOKEN_EXPIRE_TIME } from "../utils/env.parser";
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -38,7 +39,6 @@ const userSchema = new mongoose.Schema({
 
 //Encrpting password
 userSchema.pre("save", async function (next) {
-  console.log("pre middleware get called", this.password);
   // Note: here i have the access to the all the request body.
   // Generating salt: 10 is tha standard and recommended number
   const salt = await bcrypt.genSalt(10);
@@ -52,8 +52,8 @@ userSchema.methods.getSignedJwtToken = function () {
       userId: this._id,
       email: this.email,
     },
-    process.env.SECRET_KEY,
-    { expiresIn: "30d" }
+    JWT_SECRET_KEY,
+    { expiresIn: JWT_TOKEN_EXPIRE_TIME }
   );
 };
 

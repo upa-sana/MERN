@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import { User } from "../model/user.schema.js";
+import { JWT_COOKIE_TOKEN_EXPIRE_TIME } from "../utils/env.parser.js";
 import { ErrorResponse } from "../utils/error.response.js";
 
 /**
@@ -43,14 +44,13 @@ const sendTokenResponse = asyncHandler(async (user, statusCode, res) => {
 
   const options = {
     expires: new Date(
-      Date.now() +
-        process.env.JWT_COOKIE_TOKEN_EXPIRE_TIME * 24 * 60 * 60 * 1000
+      Date.now() + JWT_COOKIE_TOKEN_EXPIRE_TIME * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
   };
 
   //   if (process.env.NODE_ENV === "production") {
-  //     options.secure = true;
+  //     options.secure = true; // QN - on http connection cookies are not in encripted form Therefore, we need to set the Secure flag to ensure that the cookie is encrypted when it’s created.
   //   }
 
   res

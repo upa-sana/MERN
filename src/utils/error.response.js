@@ -5,6 +5,6 @@ export class ErrorResponse extends Error {
     this.statusCode = statusCode;
     this.status =
       this.statusCode >= 400 && this.statusCode < 500 ? "failed" : "error";
-    Error.captureStackTrace(this, this.constructor);
+    // Error.captureStackTrace(this, this.constructor);
   }
 }
