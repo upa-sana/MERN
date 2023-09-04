@@ -13,7 +13,7 @@ mongoose.connect(MONGO_DB_CONNECTION_URL).then(
   }
 );
 const app = express();
-const PORT = PORT;
+const port = PORT;
 
 // request body parser middlerware
 app.use(express.json());
@@ -23,6 +23,6 @@ app.use(express.json());
 app.use("/api", mainApp);
 app.use(errorHandler);
 // app listing point
-app.listen(PORT, () => {
-  console.log(`Server is running in the port: ${PORT}`);
+app.listen(port, () => {
+  console.log(`Server is running in the port: ${port}`);
 });

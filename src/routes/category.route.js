@@ -7,4 +7,4 @@ router
   .route("/:categoryId")
   .get(controller.getCategoryById)
   .put(controller.updateCategory)
-  .delete(controller.deleteCategory);
+  .delete(controller.removeCategory);

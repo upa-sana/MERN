@@ -3,10 +3,13 @@ import { ErrorResponse } from "../utils/error.response.js";
 // using the async await keyword for the same  code in different function does it impact on the performance
 export const findProducts = async (product) => {
   return await Product.find()
-    .populate("category", {
-      path: "category",
-      select: "displayName",
-    })
+    .populate([
+      "category",
+      {
+        path: "category",
+        select: "categoryName",
+      },
+    ])
     .where("price")
     .gte(50000)
     .lte(60000);
@@ -54,9 +57,6 @@ export const deleteProduct = async (productId) => {
 };
 
 export const createProductCategory = async (productId, requestBody) => {
-  //  i need product id to serch the product weather it exist or not
-  //  I need to pass the request body with product category name check for the request body
-  //  add the category name to the product
   const { categoryName } = requestBody;
   if (!categoryName) {
     throw ErrorResponse("Invalid request body", 400);
@@ -75,4 +75,15 @@ export const createProductCategory = async (productId, requestBody) => {
   return product;
 };
 
-// QN - Service and controller management : role separation
+export const findProductByCategory = async (categoryName) => {
+  const product = await Product.find({ categoryName: categoryName });
+
+  if (!product) {
+    throw new ErrorResponse(
+      `Product with ${categoryName} category don't exist`,
+      404
+    );
+  }
+
+  return product;
+};

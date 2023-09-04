@@ -1,9 +1,5 @@
 import asyncHandler from "express-async-handler";
-import * as data from "../model/data.js";
 import * as services from "../services/product.service.js";
-
-const productList = JSON.parse(JSON.stringify(data.products));
-const categoryList = JSON.parse(JSON.stringify(data.category));
 
 /**
  * @route   GET api/products *
@@ -93,48 +89,30 @@ export const removeProduct = asyncHandler(async (req, res) => {
     .json({ message: "Product deleted successfully", data: product });
 });
 
-// QN -this part is remaing to implement with mongoose db
-export const addProductCategory = (req, res) => {
+/**
+ * @route    POST api/products/:productId/add-category
+ * @access   private
+ */
+export const addProductCategory = asyncHandler(async (req, res) => {
   const productId = req.params.productId;
   const categoryName = req.body.categoryName;
-  const productIndex = productList.findIndex((item) => item.id === productId);
-  if (productIndex === -1) {
-    return res.status(404).json({ message: `Product don't exist.` });
-  }
+  const product = await services.createProductCategory(productId, categoryName);
+  res
+    .status(200)
+    .json({ message: "Category name is added to the product", data: product });
+});
 
-  const categoryIndex = categoryList.findIndex(
-    (item) => item.categoryName === categoryName
-  );
-
-  if (categoryIndex === -1) {
-    return res.status(400).json({ errorMessage: "Category name don't exist" });
-  }
-
-  productList[productIndex] = {
-    ...productList[productIndex],
-    categoryName,
-  };
-  res.status(200).json({ message: "Category name is added to the product" });
-};
-
-// get product as per the category
-export const getProductByCategory = (req, res) => {
-  console.log("do the category is called");
+/**
+ * @route    POST api/products/category/:categoryName
+ * @access   private
+ */
+export const getProductByCategory = asyncHandler(async (req, res) => {
   const categoryName = req.params.categoryName;
-  const productIndex = productList.findIndex(
-    (item) => item.categoryName === categoryName
-  );
-  if (productIndex === -1) {
-    return res
-      .status(404)
-      .json({ message: `Product with the provided category don't exist.` });
-  }
-
-  const productAsPerCategory = productList.filter(
-    (item) => item.categoryName === categoryName
-  );
+  console.log(categoryName);
+  const product = await services.findProductByCategory(categoryName);
+  console.log(product);
   res.status(200).json({
     message: `Product list with category '${categoryName}'`,
-    data: productAsPerCategory,
+    data: product,
   });
-};
+});

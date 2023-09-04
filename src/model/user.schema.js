@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
-import { JWT_SECRET_KEY, JWT_TOKEN_EXPIRE_TIME } from "../utils/env.parser";
+import { JWT_SECRET_KEY, JWT_TOKEN_EXPIRE_TIME } from "../utils/env.parser.js";
 
 const userSchema = new mongoose.Schema({
   name: {

@@ -1,24 +1,22 @@
+import asyncHandler from "express-async-handler";
 import * as services from "../services/category.service.js";
 
-// const categoryList = JSON.parse(JSON.stringify(data.category));
-
-export const getCategory = async (req, res) => {
+export const getCategory = asyncHandler(async (req, res) => {
   const category = await services.findCategory();
   res.status(200).json({ category: "Category List", data: category });
-};
-
+});
 //get category by id
-export const getCategoryById = async (req, res) => {
+export const getCategoryById = asyncHandler(async (req, res) => {
   const categoryId = req.params.categoryId;
   // const category = categoryList.find((item) => item.id === categoryId);
   const category = await services.findCategoryById(categoryId);
   res
     .status(200)
     .json({ message: `category with ${categoryId}`, data: category });
-};
+});
 
 // post category
-export const addCategory = async (req, res) => {
+export const addCategory = asyncHandler(async (req, res) => {
   // const { categoryName, displayName } = req.body;
   // if (!categoryName || !displayName) {
   //   return res
@@ -35,10 +33,10 @@ export const addCategory = async (req, res) => {
   // newCategory.id = categoryList.length++;
   // categoryList.push(newCategory);
   // res.status(200).json({ message: "Category Added!", data: categoryList });
-};
+});
 
 // update category
-export const updateCategory = async (req, res) => {
+export const updateCategory = asyncHandler(async (req, res) => {
   const categoryId = req.params.categoryId;
   // const { categoryName, displayName } = req.body;
   // if (!categoryName && !displayName) {
@@ -55,14 +53,14 @@ export const updateCategory = async (req, res) => {
   // category.displayName = displayName ? displayName : category.displayName;
 
   res.status(200).json({ message: "Data updated successfully!", category });
-};
+});
 
 // delete category
-export const removeCategory = async (req, res) => {
+export const removeCategory = asyncHandler(async (req, res) => {
   const categoryId = req.params.categoryId;
   const category = await services.deleteCategory(categoryId);
   res.status(200).json({ message: "Data deleted successfully!", category });
-};
+});
 
 /*
 export const deleteCategory = (req, res) => {

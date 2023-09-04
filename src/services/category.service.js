@@ -1,6 +1,7 @@
 import { Category } from "../model/category.schema.js";
+import { ErrorResponse } from "../utils/error.response.js";
 // using the async await keyword for the same  code in different function does it impact on the performance
-export const findCategory = async (product) => {
+export const findCategory = async (category) => {
   return await Category.find();
 };
 
@@ -9,20 +10,31 @@ export const findCategoryById = async (categoryId) => {
 };
 
 export const createCategory = async (requestBody) => {
-  const product = new Category(requestBody);
-  await product.save();
-  return product;
+  const category = new Category(requestBody);
+  await category.save();
+  return category;
 };
 
 export const putCategory = async (categoryId, requestBody) => {
-  const product = await Category.findById(categoryId);
-  product.name = requestBody.name ? requestBody.name : product.name;
-  product.price = requestBody.price ? requestBody.price : product.price;
-  product.desc = requestBody.desc ? requestBody.desc : product.desc;
-  product.save();
-  return product;
+  const { categoryName, displayName } = requestBody;
+  if (!categoryName || !displayName) {
+    throw new ErrorResponse(`Invalid request body`, 400);
+  }
+  const category = await Category.findById(categoryId);
+  if (!category) {
+    throw new ErrorResponse(`Category with id ${categoryId} don't exist`);
+  }
+  category.categoryName = categoryName ? categoryName : category.name;
+  category.displayName = displayName ? displayName : category.price;
+  category.save();
+  return category;
 };
 
 export const deleteCategory = async (categoryId) => {
-  return await Category.deleteOne({ _id: categoryId });
+  const category = await Category.deleteOne({ _id: categoryId });
+  if (category.deletedCount === 1) {
+    return category;
+  } else {
+    throw new ErrorResponse(`Category with id ${categoryId} don't exist`);
+  }
 };
