@@ -1,3 +1,4 @@
+import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
 import { app as mainApp } from "./app.js";
@@ -14,6 +15,9 @@ mongoose.connect(MONGO_DB_CONNECTION_URL).then(
 );
 const app = express();
 const port = PORT;
+
+// Cors implementation
+app.use(cors());
 
 // request body parser middlerware
 app.use(express.json());

@@ -22,6 +22,7 @@ const userSchema = new mongoose.Schema({
     match: new RegExp("[a-zA-z0-9.]+@[a-z].[a-z]{2,3}"),
     unique: true,
   },
+  image: String,
   role: {
     type: String,
     enum: ["Admin", "User"],
@@ -50,6 +51,7 @@ userSchema.methods.getSignedJwtToken = function () {
   return jwt.sign(
     {
       userId: this._id,
+      name: this.name,
       email: this.email,
     },
     JWT_SECRET_KEY,
