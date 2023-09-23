@@ -9,8 +9,13 @@ const categorySchema = new mongoose.Schema({
   },
   displayName: {
     type: String,
-    required: [true, "Requires"],
+    required: [true, "Required"],
     capitalize: true,
+  },
+
+  featureImage: {
+    type: Buffer,
+    required: [true, "Feature image is required"],
   },
 
   createdAt: {

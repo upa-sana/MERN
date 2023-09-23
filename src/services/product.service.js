@@ -1,18 +1,18 @@
+import { Category } from "../model/category.schema.js";
 import { Product } from "../model/product.schema.js";
 import { ErrorResponse } from "../utils/error.response.js";
 // using the async await keyword for the same  code in different function does it impact on the performance
 export const findProducts = async (product) => {
-  return await Product.find()
-    .populate([
-      "category",
-      {
-        path: "category",
-        select: "categoryName",
-      },
-    ])
-    .where("price")
-    .gte(50000)
-    .lte(60000);
+  return await Product.find().populate([
+    "category",
+    {
+      path: "category",
+      select: "categoryName",
+    },
+  ]);
+  // .where("price")
+  // .gte(50000)
+  // .lte(60000);
 };
 
 export const findProductById = async (productId) => {
@@ -20,13 +20,21 @@ export const findProductById = async (productId) => {
 };
 
 export const createProduct = async (requestBody) => {
-  const product = new Product(requestBody);
+  const { name, price, description, category, image } = requestBody;
+  const product = new Product({
+    name,
+    price,
+    description,
+    category,
+    productImage: image ? image.buffer : undefined,
+  });
+
+  // const product = new Product(requestBody);
   await product.save();
   return product;
 };
 
 export const putProduct = async (productId, requestBody) => {
-  // console.log(requestBody);
   const product = await Product.findById(productId);
   const { name, price } = requestBody;
   if (!name || !price) {
@@ -56,27 +64,36 @@ export const deleteProduct = async (productId) => {
   }
 };
 
-export const createProductCategory = async (productId, requestBody) => {
-  const { categoryName } = requestBody;
+export const createProductCategory = async (productId, categoryName) => {
   if (!categoryName) {
-    throw ErrorResponse("Invalid request body", 400);
+    throw new ErrorResponse("Invalid request body", 400);
   }
   const product = await Product.findById(productId);
   if (!product) {
-    throw ErrorResponse(`Product with id ${productId} don't exist`, 404);
+    throw new ErrorResponse(`Product with id ${productId} don't exist`, 404);
   }
 
-  product = {
-    ...product,
-    categoryName,
-  };
-
+  const category = await Category.findOne({ categoryName });
+  if (!category) {
+    throw new ErrorResponse(
+      `category with name ${categoryName} don't exist`,
+      404
+    );
+  }
+  product.category = category.id;
   product.save();
   return product;
 };
 
+//.where("name").equals(categoryName);
 export const findProductByCategory = async (categoryName) => {
-  const product = await Product.find({ categoryName: categoryName });
+  const category = await Category.findOne({ categoryName });
+  if (!category) {
+    throw new ErrorResponse(`this category don't exist`, 404);
+  }
+  const product = await Product.find({
+    category: category._id,
+  });
 
   if (!product) {
     throw new ErrorResponse(

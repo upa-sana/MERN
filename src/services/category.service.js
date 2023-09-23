@@ -10,7 +10,14 @@ export const findCategoryById = async (categoryId) => {
 };
 
 export const createCategory = async (requestBody) => {
-  const category = new Category(requestBody);
+  const { categoryName, displayName, image } = requestBody;
+
+  const category = new Category({
+    categoryName,
+    displayName,
+    featureImage: image ? image.buffer : undefined,
+  });
+
   await category.save();
   return category;
 };
