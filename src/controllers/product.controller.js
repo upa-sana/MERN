@@ -77,7 +77,7 @@ export const addProductCategory = asyncHandler(async (req, res) => {
  */
 export const getProductByCategory = asyncHandler(async (req, res) => {
   const categoryName = req.params.categoryName;
-  const product = await services.findProductByCategory(categoryName);
+  const product = await services.findProductByCategory(categoryName, req);
   res.status(200).json({
     message: `Product list with category '${categoryName}'`,
     product,

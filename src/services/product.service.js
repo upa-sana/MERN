@@ -86,14 +86,29 @@ export const createProductCategory = async (productId, categoryName) => {
 };
 
 //.where("name").equals(categoryName);
-export const findProductByCategory = async (categoryName) => {
+export const findProductByCategory = async (categoryName, request) => {
+  let query = {};
+  const { sort } = request.query;
+  console.log("sorting value", sort);
+
   const category = await Category.findOne({ categoryName });
   if (!category) {
     throw new ErrorResponse(`this category don't exist`, 404);
   }
-  const product = await Product.find({
-    category: category._id,
-  });
+
+  query.category = category._id;
+
+  if (request.query.name) {
+    query.name = product.query.name;
+  }
+  if (request.query.price) {
+    query.price = product.query.price;
+  }
+
+  if (sort) {
+    return await Product.find(query).sort({ price: sort });
+  }
+  const product = await Product.find(query);
 
   if (!product) {
     throw new ErrorResponse(
