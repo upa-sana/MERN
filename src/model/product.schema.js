@@ -21,7 +21,7 @@ const productSchema = new mongoose.Schema({
       },
     ],
   },
-  createdDate: {
+  createdAt: {
     type: Date,
     default: Date.now(),
     immutable: true,

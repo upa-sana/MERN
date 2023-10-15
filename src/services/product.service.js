@@ -16,7 +16,9 @@ export const findProducts = async (product) => {
 };
 
 export const findProductById = async (productId) => {
-  return await Product.findById(productId);
+  const data = await Product.findById(productId);
+  console.log("data from the one", data);
+  return data;
 };
 
 export const createProduct = async (requestBody) => {
@@ -35,9 +37,11 @@ export const createProduct = async (requestBody) => {
 };
 
 export const putProduct = async (productId, requestBody) => {
+  debugger;
+  console.log(requestBody);
   const product = await Product.findById(productId);
-  const { name, price } = requestBody;
-  if (!name || !price) {
+  const { name, price, description, category, productImage } = requestBody;
+  if (!name || !price || !description || !category || !productImage) {
     throw new ErrorResponse("Invalid requst body", 400);
   }
   if (!product) {
@@ -47,6 +51,15 @@ export const putProduct = async (productId, requestBody) => {
 
   product.name = requestBody.name ? requestBody.name : product.name;
   product.price = requestBody.price ? requestBody.price : product.price;
+  product.description = requestBody.description
+    ? requestBody.category
+    : product.description;
+  product.category = requestBody.category
+    ? requestBody.category
+    : product.category;
+  product.productImage = requestBody.productImage
+    ? requestBody.productImage
+    : product.productImage;
   product.save();
   return product;
 };
@@ -89,7 +102,6 @@ export const createProductCategory = async (productId, categoryName) => {
 export const findProductByCategory = async (categoryName, request) => {
   let query = {};
   const { sort } = request.query;
-  console.log("sorting value", sort);
 
   const category = await Category.findOne({ categoryName });
   if (!category) {

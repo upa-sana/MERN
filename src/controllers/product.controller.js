@@ -6,8 +6,8 @@ import * as services from "../services/product.service.js";
  * @access  public
  */
 export const getProduct = asyncHandler(async (req, res) => {
-  const product = await services.findProducts(req);
-  res.status(200).json({ message: "product list", data: product });
+  // const product = await services.findProducts(req);
+  res.status(200).json(res.advanceData);
 });
 
 /**
@@ -40,6 +40,7 @@ export const addProduct = asyncHandler(async (req, res) => {
 export const updateProduct = asyncHandler(async (req, res) => {
   const productId = req.params.productId;
   const requestBody = req.body;
+  console.log("request body", req);
   const product = await services.putProduct(productId, requestBody);
   res
     .status(200)
